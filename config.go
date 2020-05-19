@@ -1,8 +1,6 @@
 package glogger
 
 import (
-	"log"
-
 	"github.com/BurntSushi/toml"
 )
 
@@ -15,8 +13,6 @@ type LoggerConfig struct {
 	RotationMinutes int
 	MaxAgeHours     int
 }
-
-const defaultLogFlag = log.Llongfile | log.Ldate | log.Ltime | log.Lmicroseconds
 
 // var config *LoggerConfig
 
