@@ -7,6 +7,10 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+type IConfig interface {
+	GetConfig() IConfig
+}
+
 type FileLoggerConfig struct {
 	LoggerConfig
 
@@ -18,7 +22,11 @@ type FileLoggerConfig struct {
 	MaxAgeHours     int
 }
 
-// var config *LoggerConfig
+var _ IConfig = &FileLoggerConfig{}
+
+func (cfg *FileLoggerConfig) GetConfig() IConfig {
+	return cfg
+}
 
 func loadConfigFile(path string) *FileLoggerConfig {
 	var conf FileLoggerConfig
@@ -31,6 +39,12 @@ func loadConfigFile(path string) *FileLoggerConfig {
 type LoggerConfig struct {
 	Flags int
 	Level string
+}
+
+var _ IConfig = &LoggerConfig{}
+
+func (cfg *LoggerConfig) GetConfig() IConfig {
+	return cfg
 }
 
 func (cfg *LoggerConfig) ValidateConfig() {

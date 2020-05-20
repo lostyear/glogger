@@ -3,7 +3,8 @@ package glogger
 import "os"
 
 type ILogger interface {
-	GetConfig() LoggerConfig
+	IConfig
+
 	Debug(values map[string]interface{})
 	Debugf(format string, a ...interface{})
 	Info(values map[string]interface{})
@@ -23,8 +24,8 @@ type baseLogger struct {
 
 var _ ILogger = &baseLogger{}
 
-func (l *baseLogger) GetConfig() LoggerConfig {
-	return l.config
+func (l *baseLogger) GetConfig() IConfig {
+	return &l.config
 }
 
 func (l *baseLogger) Debug(values map[string]interface{}) {
