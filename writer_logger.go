@@ -17,15 +17,10 @@ func NewWriterLoggerWithWriter(w io.Writer) ILogger {
 }
 
 func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
-	cfg.ValidateConfig()
-
 	l := writerLogger{
-		baseLogger: &baseLogger{
-			config: cfg,
-		},
+		baseLogger: newBaseLoggerWithConfig(cfg),
 	}
 
-	l.lLoggers = make(map[string]levelLogger)
 	for level, num := range lLevel {
 		if num < lLevel[cfg.Level] {
 			l.lLoggers[level] = defaultEmptyLogger
@@ -48,7 +43,7 @@ func newWriterLevelLogger(w io.Writer) *writerLevelLogger {
 }
 
 func newWriterLevelLoggerWithConfig(w io.Writer, cfg LoggerConfig) *writerLevelLogger {
-	cfg.ValidateConfig()
+	cfg.validate()
 	logger := log.New(w, fmt.Sprintf("[%s] ", cfg.Level), cfg.Flags)
 	return &writerLevelLogger{
 		Logger: logger,

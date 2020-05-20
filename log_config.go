@@ -9,6 +9,7 @@ import (
 
 type IConfig interface {
 	GetConfig() IConfig
+	validate()
 }
 
 type FileLoggerConfig struct {
@@ -47,7 +48,7 @@ func (cfg *LoggerConfig) GetConfig() IConfig {
 	return cfg
 }
 
-func (cfg *LoggerConfig) ValidateConfig() {
+func (cfg *LoggerConfig) validate() {
 	if cfg.Flags == 0 {
 		cfg.Flags = defaultLogFlags
 	}

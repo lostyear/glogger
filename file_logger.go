@@ -1,5 +1,9 @@
 package glogger
 
+type FileLogger interface {
+	ILogger
+}
+
 type fileLogger struct {
 	*baseLogger
 	fileConfig FileLoggerConfig
@@ -7,15 +11,17 @@ type fileLogger struct {
 
 var _ ILogger = &fileLogger{}
 
-func NewFileLoggerWithConfigFile(path string) ILogger {
+func NewFileLoggerWithConfigFile(path string) FileLogger {
 	config := loadConfigFile(path)
 	return NewFileLoggerWithConfig(*config)
 }
 
-func NewFileLoggerWithConfig(cfg FileLoggerConfig) ILogger {
-	cfg.ValidateConfig()
+func NewFileLoggerWithConfig(cfg FileLoggerConfig) FileLogger {
+	cfg.validate()
+
 	logger := fileLogger{
 		fileConfig: cfg,
+		baseLogger: newBaseLoggerWithConfig(cfg.LoggerConfig),
 	}
 	return &logger
 }

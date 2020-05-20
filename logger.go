@@ -24,6 +24,18 @@ type baseLogger struct {
 
 var _ ILogger = &baseLogger{}
 
+func newBaseLoggerWithConfig(cfg LoggerConfig) *baseLogger {
+	cfg.validate()
+	return &baseLogger{
+		config:   cfg,
+		lLoggers: make(mLogger),
+	}
+}
+
+func (l *baseLogger) validate() {
+	l.config.validate()
+}
+
 func (l *baseLogger) GetConfig() IConfig {
 	return &l.config
 }
