@@ -17,14 +17,7 @@ func NewWriterLoggerWithWriter(w io.Writer) ILogger {
 }
 
 func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
-	if cfg.Flags == 0 {
-		cfg.Flags = defaultLogFlags
-	}
-	ulevel := strings.ToUpper(cfg.Level)
-	if _, ok := lLevel[ulevel]; !ok {
-		ulevel = defaultLogLevel
-	}
-	cfg.Level = ulevel
+	cfg.ValidateConfig()
 
 	l := writerLogger{
 		baseLogger: &baseLogger{
@@ -35,8 +28,7 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
 	l.lLoggers = make(map[string]levelLogger)
 	for level, num := range lLevel {
 		if num < lLevel[cfg.Level] {
-
-			l.lLoggers[level] = &emptyLevelLogger{}
+			l.lLoggers[level] = defaultEmptyLogger
 		} else {
 			l.lLoggers[level] = newWriterLevelLoggerWithConfig(w, LoggerConfig{
 				Flags: cfg.Flags,
@@ -56,21 +48,8 @@ func newWriterLevelLogger(w io.Writer) *writerLevelLogger {
 }
 
 func newWriterLevelLoggerWithConfig(w io.Writer, cfg LoggerConfig) *writerLevelLogger {
-	var flags int
-	var level string
-
-	if cfg.Flags == 0 {
-		flags = defaultLogFlags
-	} else {
-		flags = cfg.Flags
-	}
-
-	level = strings.ToUpper(cfg.Level)
-	if _, ok := lLevel[level]; !ok {
-		level = defaultLogLevel
-	}
-
-	logger := log.New(w, fmt.Sprintf("[%s] ", level), flags)
+	cfg.ValidateConfig()
+	logger := log.New(w, fmt.Sprintf("[%s] ", cfg.Level), cfg.Flags)
 	return &writerLevelLogger{
 		Logger: logger,
 	}

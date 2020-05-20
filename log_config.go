@@ -2,6 +2,7 @@ package glogger
 
 import (
 	"log"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -30,4 +31,17 @@ func loadConfigFile(path string) *FileLoggerConfig {
 type LoggerConfig struct {
 	Flags int
 	Level string
+}
+
+func (cfg *LoggerConfig) ValidateConfig() {
+	if cfg.Flags == 0 {
+		cfg.Flags = defaultLogFlags
+	}
+
+	level := strings.ToUpper(cfg.Level)
+	if _, ok := lLevel[level]; !ok {
+		level = defaultLogLevel
+	}
+
+	cfg.Level = level
 }

@@ -16,6 +16,14 @@ func init() {
 	defaultLogger = NewWriterLoggerWithWriter(os.Stderr)
 }
 
+func GetDefaultLogger() ILogger {
+	return defaultLogger
+}
+
+func SetDefaultLogger(logger ILogger) {
+	defaultLogger = logger
+}
+
 func Debug(values map[string]interface{}) {
 	defaultLogger.Debug(values)
 }

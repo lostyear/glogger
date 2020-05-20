@@ -3,6 +3,7 @@ package glogger
 import "os"
 
 type ILogger interface {
+	GetConfig() LoggerConfig
 	Debug(values map[string]interface{})
 	Debugf(format string, a ...interface{})
 	Info(values map[string]interface{})
@@ -68,7 +69,7 @@ type levelLogger interface {
 
 type emptyLevelLogger struct{}
 
-var _ levelLogger = &emptyLevelLogger{}
+var defaultEmptyLogger levelLogger = &emptyLevelLogger{}
 
 func (*emptyLevelLogger) Print(values map[string]interface{})    {}
 func (*emptyLevelLogger) Printf(format string, a ...interface{}) {}
