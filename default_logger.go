@@ -3,23 +3,29 @@ package glogger
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 )
 
-var defaultLogger Logger
+var defaultLogger ILogger
 
-const defaultLogFlags = log.Llongfile | log.Ldate | log.Ltime | log.Lmicroseconds
+const (
+	defaultLogFlags = log.Llongfile | log.Ldate | log.Ltime | log.Lmicroseconds
+	defaultLogLevel = LLevelDebug
+)
 
 func init() {
-	setDefaultLogger()
+	defaultLogger = NewWriterLoggerWithWriter(os.Stderr)
+	// setDefaultLogger()
 }
 
 func setDefaultLogger() {
-	defaultLogger.debugLogger = newDefaultStdLogger(fmt.Sprintf("[%s] ", LLevelDebug))
+	// defaultLogger.debugLogger = newDefaultStdLogger(fmt.Sprintf("[%s] ", LLevelDebug))
 }
 
 func Debugf(format string, a ...interface{}) {
 	defaultLogger.Debugf(format, a...)
+	fmt.Println(defaultLogger)
 }
 
 type stdLogger struct {

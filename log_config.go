@@ -1,6 +1,8 @@
 package glogger
 
 import (
+	"log"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -20,7 +22,7 @@ type FileLoggerConfig struct {
 func loadConfigFile(path string) *FileLoggerConfig {
 	var conf FileLoggerConfig
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
-		panic("decode config file failed!")
+		log.Panicf("decode config file failed! Error: %s", err)
 	}
 	return &conf
 }

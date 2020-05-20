@@ -15,11 +15,11 @@ type WriterLogger struct {
 	lLoggers map[string]iLevelLogger
 }
 
-func NewWriterLoggerWithWriter(w io.Writer) *WriterLogger {
+func NewWriterLoggerWithWriter(w io.Writer) ILogger {
 	return NewWriterLoggerWithWriterAndConfig(w, LoggerConfig{})
 }
 
-func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) *WriterLogger {
+func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
 	if cfg.Flags == 0 {
 		cfg.Flags = defaultLogFlags
 	}
@@ -32,7 +32,8 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) *WriterLo
 	l := WriterLogger{
 		config: cfg,
 	}
-	//TODO: level loggers
+
+	l.lLoggers = make(map[string]iLevelLogger)
 	for level, num := range lLevel {
 		if num < lLevel[cfg.Level] {
 
@@ -45,6 +46,13 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) *WriterLo
 		}
 	}
 	return &l
+}
+
+func (l *WriterLogger) Debug(values map[string]interface{}) {
+	l.lLoggers[LLevelDebug].Print(values)
+}
+func (l *WriterLogger) Debugf(format string, a ...interface{}) {
+	l.lLoggers[LLevelDebug].Printf(format, a...)
 }
 
 type writerLevelLogger struct {
