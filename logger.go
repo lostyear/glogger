@@ -15,75 +15,52 @@ type ILogger interface {
 	Fatalf(format string, a ...interface{})
 }
 
-type Logger struct {
+type baseLogger struct {
 	ILogger
 
-	config *FileLoggerConfig
+	config LoggerConfig
 
-	debugLogger levelLogger
-	infoLogger  levelLogger
-	warnLogger  levelLogger
-	errorLogger levelLogger
-	fatalLogger levelLogger
+	lLoggers mLogger
 }
 
-func NewFileLoggerWithConfigFile(path string) *Logger {
-	config := loadConfigFile(path)
-	return NewFileLoggerWithConfig(*config)
+func (l *baseLogger) GetConfig() LoggerConfig {
+	return l.config
 }
 
-func NewFileLoggerWithConfig(cfg FileLoggerConfig) *Logger {
-	logger := Logger{
-		config: &cfg,
-	}
-	return &logger
+func (l *baseLogger) Debug(values map[string]interface{}) {
+	l.lLoggers[LLevelDebug].Print(values)
 }
-
-func (l *Logger) GetConfig() FileLoggerConfig {
-	return *l.config
+func (l *baseLogger) Debugf(format string, a ...interface{}) {
+	l.lLoggers[LLevelDebug].Printf(format, a...)
 }
-
-func (l *Logger) Debug(values map[string]interface{}) {
-	l.debugLogger.Print(values)
+func (l *baseLogger) Info(values map[string]interface{}) {
+	l.lLoggers[LLevelInfo].Print(values)
 }
-
-func (l *Logger) Debugf(format string, a ...interface{}) {
-	l.debugLogger.Printf(format, a...)
+func (l *baseLogger) Infof(format string, a ...interface{}) {
+	l.lLoggers[LLevelInfo].Printf(format, a...)
 }
-
-func (l *Logger) Info(values map[string]interface{}) {
-	l.infoLogger.Print(values)
+func (l *baseLogger) Warn(values map[string]interface{}) {
+	l.lLoggers[LLevelWarn].Print(values)
 }
-
-func (l *Logger) Infof(format string, a ...interface{}) {
-	l.infoLogger.Printf(format, a...)
+func (l *baseLogger) Warnf(format string, a ...interface{}) {
+	l.lLoggers[LLevelWarn].Printf(format, a...)
 }
-
-func (l *Logger) Warn(values map[string]interface{}) {
-	l.warnLogger.Print(values)
+func (l *baseLogger) Error(values map[string]interface{}) {
+	l.lLoggers[LLevelError].Print(values)
 }
-
-func (l *Logger) Warnf(format string, a ...interface{}) {
-	l.warnLogger.Printf(format, a...)
+func (l *baseLogger) Errorf(format string, a ...interface{}) {
+	l.lLoggers[LLevelError].Printf(format, a...)
 }
-
-func (l *Logger) Error(values map[string]interface{}) {
-	l.errorLogger.Print(values)
+func (l *baseLogger) Fatal(values map[string]interface{}) {
+	l.lLoggers[LLevelFatal].Print(values)
+	os.Exit(1)
 }
-
-func (l *Logger) Errorf(format string, a ...interface{}) {
-	l.errorLogger.Printf(format, a...)
-}
-
-func (l *Logger) Fatal(values map[string]interface{}) {
-	l.fatalLogger.Print(values)
+func (l *baseLogger) Fatalf(format string, a ...interface{}) {
+	l.lLoggers[LLevelFatal].Printf(format, a...)
 	os.Exit(1)
 }
 
-func (l *Logger) Fatalf(format string, a ...interface{}) {
-	l.fatalLogger.Printf(format, a...)
-	os.Exit(1)
-}
+type mLogger map[string]levelLogger
 
 type levelLogger interface {
 	Print(values map[string]interface{})
