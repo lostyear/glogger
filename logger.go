@@ -91,9 +91,9 @@ type baseLevelLogger struct {
 	*log.Logger
 }
 
-func newBaseLogger(w io.Writer, prefix string, flag int) *baseLevelLogger {
+func newBaseLogger(w io.Writer, level string, flag int) *baseLevelLogger {
 	return &baseLevelLogger{
-		Logger: log.New(w, prefix, flag),
+		Logger: log.New(w, fmt.Sprintf("[%s] ", level), flag),
 	}
 }
 

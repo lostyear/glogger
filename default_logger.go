@@ -1,6 +1,7 @@
 package glogger
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -53,4 +54,8 @@ func Fatal(values map[string]interface{}) {
 }
 func Fatalf(format string, a ...interface{}) {
 	defaultLogger.Fatalf(format, a...)
+}
+
+func defaultLevelLoggerPrefix(level string) string {
+	return fmt.Sprintf("[%s] ", level)
 }
