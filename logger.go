@@ -3,22 +3,22 @@ package glogger
 import "os"
 
 type ILogger interface {
-	Debug(map[string]interface{})
-	Debugf(string, ...interface{})
-	Info(map[string]interface{})
-	Infof(string, ...interface{})
-	Warn(map[string]interface{})
-	Warnf(string, ...interface{})
-	Error(map[string]interface{})
-	Errorf(string, ...interface{})
-	Fatal(map[string]interface{})
-	Fatalf(string, ...interface{})
+	Debug(values map[string]interface{})
+	Debugf(format string, a ...interface{})
+	Info(values map[string]interface{})
+	Infof(format string, a ...interface{})
+	Warn(values map[string]interface{})
+	Warnf(format string, a ...interface{})
+	Error(values map[string]interface{})
+	Errorf(format string, a ...interface{})
+	Fatal(values map[string]interface{})
+	Fatalf(format string, a ...interface{})
 }
 
 type Logger struct {
 	ILogger
 
-	config *LoggerConfig
+	config *FileLoggerConfig
 
 	debugLogger iLevelLogger
 	infoLogger  iLevelLogger
@@ -27,19 +27,19 @@ type Logger struct {
 	fatalLogger iLevelLogger
 }
 
-func NewLoggerWithConfigFile(path string) *Logger {
+func NewFileLoggerWithConfigFile(path string) *Logger {
 	config := loadConfigFile(path)
-	return NewLoggerWithConfig(*config)
+	return NewFileLoggerWithConfig(*config)
 }
 
-func NewLoggerWithConfig(cfg LoggerConfig) *Logger {
+func NewFileLoggerWithConfig(cfg FileLoggerConfig) *Logger {
 	logger := Logger{
 		config: &cfg,
 	}
 	return &logger
 }
 
-func (l *Logger) GetConfig() LoggerConfig {
+func (l *Logger) GetConfig() FileLoggerConfig {
 	return *l.config
 }
 
@@ -86,6 +86,13 @@ func (l *Logger) Fatalf(format string, a ...interface{}) {
 }
 
 type iLevelLogger interface {
-	Print(map[string]interface{})
-	Printf(string, ...interface{})
+	Print(values map[string]interface{})
+	Printf(format string, a ...interface{})
 }
+
+type emptyLevelLogger struct {
+	iLevelLogger
+}
+
+func (*emptyLevelLogger) Print(values map[string]interface{})    {}
+func (*emptyLevelLogger) Printf(format string, a ...interface{}) {}
