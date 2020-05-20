@@ -1,5 +1,7 @@
 package glogger
 
+import "log"
+
 type FileLogger interface {
 	ILogger
 }
@@ -19,13 +21,24 @@ func NewFileLoggerWithConfigFile(path string) FileLogger {
 func NewFileLoggerWithConfig(cfg FileLoggerConfig) FileLogger {
 	cfg.validate()
 
-	logger := fileLogger{
+	l := fileLogger{
 		fileConfig: cfg,
 		baseLogger: newBaseLoggerWithConfig(cfg.LoggerConfig),
 	}
-	return &logger
+
+	for level, num := range lLevel {
+		if num < lLevel[cfg.Level] {
+			l.lLoggers[level] = defaultEmptyLogger
+		} else {
+		}
+	}
+	return &l
 }
 
 func (l *fileLogger) GetConfig() IConfig {
 	return &l.fileConfig
+}
+
+type fileLevelLogger struct {
+	*log.Logger
 }

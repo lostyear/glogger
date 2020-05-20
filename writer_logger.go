@@ -27,7 +27,7 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
 		} else {
 			l.lLoggers[level] = newWriterLevelLoggerWithConfig(w, LoggerConfig{
 				Flags: cfg.Flags,
-				Level: cfg.Level,
+				Level: level,
 			})
 		}
 	}

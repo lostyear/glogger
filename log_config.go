@@ -25,6 +25,8 @@ type FileLoggerConfig struct {
 
 var _ IConfig = &FileLoggerConfig{}
 
+//TODO: file logger validate
+
 func (cfg *FileLoggerConfig) GetConfig() IConfig {
 	return cfg
 }
