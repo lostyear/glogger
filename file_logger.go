@@ -30,6 +30,9 @@ func NewFileLoggerWithConfig(cfg FileLoggerConfig) FileLogger {
 		if num < lLevel[cfg.Level] {
 			l.lLoggers[level] = defaultEmptyLogger
 		} else {
+			// l.lLoggers[level] = newFileLevelLoggerWithConfig(FileLoggerConfog{
+
+			// })
 		}
 	}
 	return &l
@@ -42,3 +45,7 @@ func (l *fileLogger) GetConfig() IConfig {
 type fileLevelLogger struct {
 	*log.Logger
 }
+
+// func newFileLevelLoggerWithConfig(cfg FileLoggerConfig) *fileLogger{
+
+// }

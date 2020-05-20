@@ -1,6 +1,13 @@
 package glogger
 
-import "os"
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"log"
+	"os"
+	"strings"
+)
 
 type ILogger interface {
 	IConfig
@@ -78,6 +85,35 @@ type mLogger map[string]levelLogger
 type levelLogger interface {
 	Print(values map[string]interface{})
 	Printf(format string, a ...interface{})
+}
+
+type baseLevelLogger struct {
+	*log.Logger
+}
+
+func newBaseLogger(w io.Writer, prefix string, flag int) *baseLevelLogger {
+	return &baseLevelLogger{
+		Logger: log.New(w, prefix, flag),
+	}
+}
+
+func (l *baseLevelLogger) Print(values map[string]interface{}) {
+	sb := strings.Builder{}
+
+	for k, v := range values {
+		// TODO: field separator
+		// TODO: file format
+		if j, err := json.Marshal(v); err != nil {
+			sb.WriteString(fmt.Sprintf("||%s=%v", k, v))
+		} else {
+			sb.WriteString(fmt.Sprintf("||%s=%s", k, string(j)))
+		}
+	}
+	l.Logger.Println(sb.String())
+}
+
+func (l *baseLevelLogger) Printf(format string, a ...interface{}) {
+	l.Logger.Printf(format, a...)
 }
 
 type emptyLevelLogger struct{}
