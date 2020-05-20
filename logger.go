@@ -20,11 +20,11 @@ type Logger struct {
 
 	config *FileLoggerConfig
 
-	debugLogger iLevelLogger
-	infoLogger  iLevelLogger
-	warnLogger  iLevelLogger
-	errorLogger iLevelLogger
-	fatalLogger iLevelLogger
+	debugLogger levelLogger
+	infoLogger  levelLogger
+	warnLogger  levelLogger
+	errorLogger levelLogger
+	fatalLogger levelLogger
 }
 
 func NewFileLoggerWithConfigFile(path string) *Logger {
@@ -85,13 +85,13 @@ func (l *Logger) Fatalf(format string, a ...interface{}) {
 	os.Exit(1)
 }
 
-type iLevelLogger interface {
+type levelLogger interface {
 	Print(values map[string]interface{})
 	Printf(format string, a ...interface{})
 }
 
 type emptyLevelLogger struct {
-	iLevelLogger
+	levelLogger
 }
 
 func (*emptyLevelLogger) Print(values map[string]interface{})    {}

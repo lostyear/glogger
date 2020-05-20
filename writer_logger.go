@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -12,7 +13,7 @@ type WriterLogger struct {
 	ILogger
 
 	config   LoggerConfig
-	lLoggers map[string]iLevelLogger
+	lLoggers map[string]levelLogger
 }
 
 func NewWriterLoggerWithWriter(w io.Writer) ILogger {
@@ -33,7 +34,7 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
 		config: cfg,
 	}
 
-	l.lLoggers = make(map[string]iLevelLogger)
+	l.lLoggers = make(map[string]levelLogger)
 	for level, num := range lLevel {
 		if num < lLevel[cfg.Level] {
 
@@ -74,13 +75,15 @@ func (l *WriterLogger) Errorf(format string, a ...interface{}) {
 }
 func (l *WriterLogger) Fatal(values map[string]interface{}) {
 	l.lLoggers[LLevelFatal].Print(values)
+	os.Exit(1)
 }
 func (l *WriterLogger) Fatalf(format string, a ...interface{}) {
 	l.lLoggers[LLevelFatal].Printf(format, a...)
+	os.Exit(1)
 }
 
 type writerLevelLogger struct {
-	iLevelLogger
+	levelLogger
 
 	*log.Logger
 }

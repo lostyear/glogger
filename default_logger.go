@@ -1,10 +1,8 @@
 package glogger
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 var defaultLogger ILogger
@@ -16,34 +14,35 @@ const (
 
 func init() {
 	defaultLogger = NewWriterLoggerWithWriter(os.Stderr)
-	// setDefaultLogger()
 }
 
-func setDefaultLogger() {
-	// defaultLogger.debugLogger = newDefaultStdLogger(fmt.Sprintf("[%s] ", LLevelDebug))
+func Debug(values map[string]interface{}) {
+	defaultLogger.Debug(values)
 }
-
 func Debugf(format string, a ...interface{}) {
 	defaultLogger.Debugf(format, a...)
-	fmt.Println(defaultLogger)
 }
-
-type stdLogger struct {
-	*log.Logger
+func Info(values map[string]interface{}) {
+	defaultLogger.Info(values)
 }
-
-func (l *stdLogger) Print(values map[string]interface{}) {
-	sb := strings.Builder{}
-
-	for k, v := range values {
-		sb.WriteString(fmt.Sprintf("||%s=%v", k, v))
-	}
-	l.Logger.Println(sb.String())
+func Infof(format string, a ...interface{}) {
+	defaultLogger.Infof(format, a...)
 }
-
-func newDefaultStdLogger(prefix string) *stdLogger {
-	l := log.New(log.Writer(), prefix, defaultLogFlags)
-	return &stdLogger{
-		Logger: l,
-	}
+func Warn(values map[string]interface{}) {
+	defaultLogger.Warn(values)
+}
+func Warnf(format string, a ...interface{}) {
+	defaultLogger.Warnf(format, a...)
+}
+func Error(values map[string]interface{}) {
+	defaultLogger.Error(values)
+}
+func Errorf(format string, a ...interface{}) {
+	defaultLogger.Errorf(format, a...)
+}
+func Fatal(values map[string]interface{}) {
+	defaultLogger.Fatal(values)
+}
+func Fatalf(format string, a ...interface{}) {
+	defaultLogger.Fatalf(format, a...)
 }
