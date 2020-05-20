@@ -5,15 +5,11 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"strings"
 )
 
-type WriterLogger struct {
-	ILogger
-
-	config   LoggerConfig
-	lLoggers map[string]levelLogger
+type writerLogger struct {
+	*baseLogger
 }
 
 func NewWriterLoggerWithWriter(w io.Writer) ILogger {
@@ -30,8 +26,10 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
 	}
 	cfg.Level = ulevel
 
-	l := WriterLogger{
-		config: cfg,
+	l := writerLogger{
+		baseLogger: &baseLogger{
+			config: cfg,
+		},
 	}
 
 	l.lLoggers = make(map[string]levelLogger)
@@ -49,42 +47,7 @@ func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
 	return &l
 }
 
-func (l *WriterLogger) Debug(values map[string]interface{}) {
-	l.lLoggers[LLevelDebug].Print(values)
-}
-func (l *WriterLogger) Debugf(format string, a ...interface{}) {
-	l.lLoggers[LLevelDebug].Printf(format, a...)
-}
-func (l *WriterLogger) Info(values map[string]interface{}) {
-	l.lLoggers[LLevelInfo].Print(values)
-}
-func (l *WriterLogger) Infof(format string, a ...interface{}) {
-	l.lLoggers[LLevelInfo].Printf(format, a...)
-}
-func (l *WriterLogger) Warn(values map[string]interface{}) {
-	l.lLoggers[LLevelWarn].Print(values)
-}
-func (l *WriterLogger) Warnf(format string, a ...interface{}) {
-	l.lLoggers[LLevelWarn].Printf(format, a...)
-}
-func (l *WriterLogger) Error(values map[string]interface{}) {
-	l.lLoggers[LLevelError].Print(values)
-}
-func (l *WriterLogger) Errorf(format string, a ...interface{}) {
-	l.lLoggers[LLevelError].Printf(format, a...)
-}
-func (l *WriterLogger) Fatal(values map[string]interface{}) {
-	l.lLoggers[LLevelFatal].Print(values)
-	os.Exit(1)
-}
-func (l *WriterLogger) Fatalf(format string, a ...interface{}) {
-	l.lLoggers[LLevelFatal].Printf(format, a...)
-	os.Exit(1)
-}
-
 type writerLevelLogger struct {
-	levelLogger
-
 	*log.Logger
 }
 

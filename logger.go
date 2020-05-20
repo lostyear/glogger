@@ -16,12 +16,11 @@ type ILogger interface {
 }
 
 type baseLogger struct {
-	ILogger
-
-	config LoggerConfig
-
+	config   LoggerConfig
 	lLoggers mLogger
 }
+
+var _ ILogger = &baseLogger{}
 
 func (l *baseLogger) GetConfig() LoggerConfig {
 	return l.config
@@ -67,9 +66,9 @@ type levelLogger interface {
 	Printf(format string, a ...interface{})
 }
 
-type emptyLevelLogger struct {
-	levelLogger
-}
+type emptyLevelLogger struct{}
+
+var _ levelLogger = &emptyLevelLogger{}
 
 func (*emptyLevelLogger) Print(values map[string]interface{})    {}
 func (*emptyLevelLogger) Printf(format string, a ...interface{}) {}
