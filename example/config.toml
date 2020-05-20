@@ -1,7 +1,7 @@
 path = "logs/"
 logFilePrefix = ""
 logFileSuffix = ".%Y%m%d%H"
-logLevel = "debug"
+level = "debug"
 splitLevelFiles = true
 rotationMinutes = 60
 maxAgeHours = 72
