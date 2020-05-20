@@ -59,6 +59,8 @@ func (l *writerLevelLogger) Print(values map[string]interface{}) {
 	sb := strings.Builder{}
 
 	for k, v := range values {
+		// TODO: field separator
+		// TODO: file format
 		if j, err := json.Marshal(v); err != nil {
 			sb.WriteString(fmt.Sprintf("||%s=%v", k, v))
 		} else {
