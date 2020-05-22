@@ -31,6 +31,8 @@ type baseLogger struct {
 
 var _ ILogger = &baseLogger{}
 
+type mLogger map[string]levelLogger
+
 func newBaseLoggerWithConfig(cfg LoggerConfig) *baseLogger {
 	cfg.validate()
 	return &baseLogger{
@@ -80,9 +82,10 @@ func (l *baseLogger) Fatalf(format string, a ...interface{}) {
 	os.Exit(1)
 }
 
-type mLogger map[string]levelLogger
-
 type levelLogger interface {
+	// NOTE: does this interface need IConfig?
+	// IConfig
+
 	Print(values map[string]interface{})
 	Printf(format string, a ...interface{})
 }
@@ -90,6 +93,8 @@ type levelLogger interface {
 type baseLevelLogger struct {
 	*log.Logger
 }
+
+var _ levelLogger = &baseLevelLogger{}
 
 func newBaseLogger(w io.Writer, level string, flag int) *baseLevelLogger {
 	return &baseLevelLogger{

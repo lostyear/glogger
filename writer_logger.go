@@ -8,6 +8,8 @@ type writerLogger struct {
 	*baseLogger
 }
 
+var _ ILogger = &writerLogger{}
+
 func NewWriterLoggerWithWriter(w io.Writer) ILogger {
 	return NewWriterLoggerWithWriterAndConfig(w, LoggerConfig{})
 }
@@ -34,6 +36,8 @@ type writerLevelLogger struct {
 	*baseLevelLogger
 }
 
+var _ levelLogger = &writerLevelLogger{}
+
 func newWriterLevelLogger(w io.Writer) *writerLevelLogger {
 	return newWriterLevelLoggerWithConfig(w, LoggerConfig{})
 }
@@ -46,9 +50,9 @@ func newWriterLevelLoggerWithConfig(w io.Writer, cfg LoggerConfig) *writerLevelL
 	}
 }
 
-type emptyWriter struct {
-	io.Writer
-}
+type emptyWriter struct{}
+
+var _ io.Writer = &emptyWriter{}
 
 func (ew *emptyWriter) Write(p []byte) (n int, err error) {
 	return 0, nil

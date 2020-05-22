@@ -58,6 +58,7 @@ type FileLoggerConfig struct {
 var _ IConfig = &FileLoggerConfig{}
 
 //TODO: file logger validate
+//TODO: file level logger get config
 func (fcfg *FileLoggerConfig) newFileLevelLoggerConfig(level string) FileLevelLoggerConfig {
 	var filename string
 	if fcfg.SplitLevelFiles {
@@ -85,6 +86,9 @@ type FileLevelLoggerConfig struct {
 
 var _ IConfig = &FileLevelLoggerConfig{}
 
+//TODO: file level logger validate
+//TODO: file level logger get config
+
 type BaseFileLogConfig struct {
 	LoggerConfig
 	rotationTime time.Duration
@@ -93,6 +97,9 @@ type BaseFileLogConfig struct {
 }
 
 var _ IConfig = &BaseFileLogConfig{}
+
+//TODO: base file logger validate
+//TODO: base file logger get config
 
 func (cfg *FileLoggerConfig) GetConfig() IConfig {
 	return cfg
@@ -117,6 +124,7 @@ func (cfg *LoggerConfig) GetConfig() IConfig {
 	return cfg
 }
 
+//optimize: less call
 func (cfg *LoggerConfig) validate() {
 	if cfg.Flags == 0 {
 		cfg.Flags = defaultLogFlags

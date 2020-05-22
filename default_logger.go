@@ -21,6 +21,8 @@ func GetDefaultLogger() ILogger {
 	return defaultLogger
 }
 
+//todo: set default logger to writer
+//todo: set default logger to file
 func SetDefaultLogger(logger ILogger) {
 	defaultLogger = logger
 }

@@ -8,6 +8,8 @@ import (
 
 type FileLogger interface {
 	ILogger
+
+	//todo: file logger funcs
 }
 
 type fileLogger struct {
