@@ -2,7 +2,6 @@ package glogger
 
 import (
 	"log"
-	"time"
 
 	rlogs "github.com/lestrrat-go/file-rotatelogs"
 )
@@ -35,7 +34,7 @@ func NewFileLoggerWithConfig(cfg FileLoggerConfig) FileLogger {
 		if num < lLevel[cfg.Level] {
 			l.lLoggers[level] = defaultEmptyLogger
 		} else {
-			l.lLoggers[level] = newFileLevelLoggerWithConfig(FileLoggerConfig{})
+			l.lLoggers[level] = newFileLevelLoggerWithConfig(cfg.newFileLevelLoggerConfig(level))
 		}
 	}
 	return &l
@@ -47,15 +46,19 @@ func (l *fileLogger) GetConfig() IConfig {
 
 type fileLevelLogger struct {
 	*baseLevelLogger
+
+	fileWriter *rlogs.RotateLogs
 }
 
-func newFileLevelLoggerWithConfig(cfg FileLoggerConfig) *fileLevelLogger {
+func newFileLevelLoggerWithConfig(cfg FileLevelLoggerConfig) *fileLevelLogger {
 	cfg.validate()
 
 	w, err := rlogs.New(
-		"filename",
-		rlogs.WithRotationTime(time.Second),
-		rlogs.WithMaxAge(time.Hour),
+		cfg.filename,
+		rlogs.WithLinkName(cfg.linkedFilename),
+		rlogs.WithRotationTime(cfg.rotationTime),
+		rlogs.WithMaxAge(cfg.maxAge),
+		rlogs.WithRotationCount(cfg.maxCount),
 	)
 	if err != nil {
 		log.Panic("open log file error! ", err)
