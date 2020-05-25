@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var defaultLogger ILogger
+var defaultLogger Logger
 
 const (
 	defaultLogFlags = log.Llongfile | log.Ldate | log.Ltime | log.Lmicroseconds
@@ -17,13 +17,13 @@ func init() {
 	defaultLogger = NewWriterLoggerWithWriter(os.Stderr)
 }
 
-func GetDefaultLogger() ILogger {
+func GetDefaultLogger() Logger {
 	return defaultLogger
 }
 
 //todo: set default logger to writer
 //todo: set default logger to file
-func SetDefaultLogger(logger ILogger) {
+func SetDefaultLogger(logger Logger) {
 	defaultLogger = logger
 }
 

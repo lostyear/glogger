@@ -8,13 +8,13 @@ type writerLogger struct {
 	*baseLogger
 }
 
-var _ ILogger = &writerLogger{}
+var _ Logger = &writerLogger{}
 
-func NewWriterLoggerWithWriter(w io.Writer) ILogger {
+func NewWriterLoggerWithWriter(w io.Writer) Logger {
 	return NewWriterLoggerWithWriterAndConfig(w, LoggerConfig{})
 }
 
-func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) ILogger {
+func NewWriterLoggerWithWriterAndConfig(w io.Writer, cfg LoggerConfig) Logger {
 	l := writerLogger{
 		baseLogger: newBaseLoggerWithConfig(cfg),
 	}

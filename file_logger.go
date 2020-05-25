@@ -7,7 +7,7 @@ import (
 )
 
 type FileLogger interface {
-	ILogger
+	Logger
 
 	//todo: file logger funcs
 }
@@ -17,7 +17,7 @@ type fileLogger struct {
 	fileConfig FileLoggerConfig
 }
 
-var _ ILogger = &fileLogger{}
+var _ Logger = &fileLogger{}
 
 func NewFileLoggerWithConfigFile(path string) FileLogger {
 	config := loadConfigFile(path)

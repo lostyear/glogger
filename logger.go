@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type ILogger interface {
+type Logger interface {
 	IConfig
 
 	Debug(values map[string]interface{})
@@ -29,7 +29,7 @@ type baseLogger struct {
 	lLoggers mLogger
 }
 
-var _ ILogger = &baseLogger{}
+var _ Logger = &baseLogger{}
 
 type mLogger map[string]levelLogger
 
