@@ -28,6 +28,15 @@ type FileLoggerConfigFile struct {
 
 var _ IConfig = &FileLoggerConfigFile{}
 
+func loadConfigFile(path string) *FileLoggerConfig {
+	var conf FileLoggerConfigFile
+	if _, err := toml.DecodeFile(path, &conf); err != nil {
+		//TODO: panic in lib is not good
+		log.Panicf("decode config file failed! Error: %s", err)
+	}
+	return conf.convertConfigFile()
+}
+
 func (fcfg *FileLoggerConfigFile) convertConfigFile() *FileLoggerConfig {
 	cfg := FileLoggerConfig{
 		BaseFileLogConfig: BaseFileLogConfig{
@@ -58,7 +67,16 @@ type FileLoggerConfig struct {
 var _ IConfig = &FileLoggerConfig{}
 
 //TODO: file logger validate
-//TODO: file level logger get config
+func (cfg *FileLoggerConfig) validate() {
+	//TODO: validate is file string has none support %
+	// TODO: validate permision
+
+}
+
+func (cfg *FileLoggerConfig) GetConfig() IConfig {
+	return cfg
+}
+
 func (fcfg *FileLoggerConfig) newFileLevelLoggerConfig(level string) FileLevelLoggerConfig {
 	var filename string
 	if fcfg.SplitLevelFiles {
@@ -87,7 +105,9 @@ type FileLevelLoggerConfig struct {
 var _ IConfig = &FileLevelLoggerConfig{}
 
 //TODO: file level logger validate
-//TODO: file level logger get config
+func (cfg *FileLevelLoggerConfig) GetConfig() IConfig {
+	return cfg
+}
 
 type BaseFileLogConfig struct {
 	LoggerConfig
@@ -99,18 +119,8 @@ type BaseFileLogConfig struct {
 var _ IConfig = &BaseFileLogConfig{}
 
 //TODO: base file logger validate
-//TODO: base file logger get config
-
-func (cfg *FileLoggerConfig) GetConfig() IConfig {
+func (cfg *BaseFileLogConfig) GetConfig() IConfig {
 	return cfg
-}
-
-func loadConfigFile(path string) *FileLoggerConfig {
-	var conf FileLoggerConfigFile
-	if _, err := toml.DecodeFile(path, &conf); err != nil {
-		log.Panicf("decode config file failed! Error: %s", err)
-	}
-	return conf.convertConfigFile()
 }
 
 type LoggerConfig struct {

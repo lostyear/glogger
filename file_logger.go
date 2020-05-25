@@ -63,6 +63,7 @@ func newFileLevelLoggerWithConfig(cfg FileLevelLoggerConfig) *fileLevelLogger {
 		rlogs.WithRotationCount(cfg.maxCount),
 	)
 	if err != nil {
+		//TODO: panic in lib is not good
 		log.Panic("open log file error! ", err)
 	}
 
