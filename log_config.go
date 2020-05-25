@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/lestrrat-go/strftime"
 )
 
 type IConfig interface {
@@ -66,9 +67,19 @@ type FileLoggerConfig struct {
 
 var _ IConfig = &FileLoggerConfig{}
 
-//TODO: file logger validate
 func (cfg *FileLoggerConfig) validate() {
-	//TODO: validate is file string has none support %
+	if _, err := strftime.New(cfg.FilePath); err != nil {
+		//TODO: panic in lib is not good
+		panic("invalid path string")
+	}
+	if _, err := strftime.New(cfg.FilePrefix); err != nil {
+		//TODO: panic in lib is not good
+		panic("invalid prefix string")
+	}
+	if _, err := strftime.New(cfg.FileSuffix); err != nil {
+		//TODO: panic in lib is not good
+		panic("invalid suffix string")
+	}
 	// TODO: validate permision
 
 }
@@ -104,7 +115,14 @@ type FileLevelLoggerConfig struct {
 
 var _ IConfig = &FileLevelLoggerConfig{}
 
-//TODO: file level logger validate
+func (cfg *FileLevelLoggerConfig) validate() {
+	if _, err := strftime.New(cfg.filename); err != nil {
+		//TODO: panic in lib is not good
+		panic("invalid filename string")
+	}
+	//TODO: valid linked  file
+}
+
 func (cfg *FileLevelLoggerConfig) GetConfig() IConfig {
 	return cfg
 }
@@ -118,7 +136,24 @@ type BaseFileLogConfig struct {
 
 var _ IConfig = &BaseFileLogConfig{}
 
-//TODO: base file logger validate
+func (cfg *BaseFileLogConfig) validate() {
+	if cfg.rotationTime < 0 {
+		//TODO: panic in lib is not good
+		panic("invalid rotation time")
+	}
+	if cfg.maxAge > 0 && cfg.maxCount > 0 {
+		//TODO: panic in lib is not good
+		panic("only one of maxAge  and maxCount can set")
+	}
+
+	if cfg.maxAge <= 0 {
+		cfg.maxAge = 0
+	}
+	if cfg.maxCount <= 0 {
+		cfg.maxCount = 0
+	}
+}
+
 func (cfg *BaseFileLogConfig) GetConfig() IConfig {
 	return cfg
 }
