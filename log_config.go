@@ -12,7 +12,7 @@ import (
 
 type IConfig interface {
 	GetConfig() IConfig
-	validate()
+	validate() error
 }
 
 type FileLoggerConfigFile struct {
@@ -67,21 +67,19 @@ type FileLoggerConfig struct {
 
 var _ IConfig = &FileLoggerConfig{}
 
-func (cfg *FileLoggerConfig) validate() {
+func (cfg *FileLoggerConfig) validate() error {
 	if _, err := strftime.New(cfg.FilePath); err != nil {
-		//TODO: panic in lib is not good
-		panic("invalid path string")
+		return fmt.Errorf("invalid path string: %s", cfg.FilePath)
 	}
 	if _, err := strftime.New(cfg.FilePrefix); err != nil {
-		//TODO: panic in lib is not good
-		panic("invalid prefix string")
+		return fmt.Errorf("invalid prefix string: %s", cfg.FilePrefix)
 	}
 	if _, err := strftime.New(cfg.FileSuffix); err != nil {
-		//TODO: panic in lib is not good
-		panic("invalid suffix string")
+		return fmt.Errorf("invalid suffix string: %s", cfg.FileSuffix)
 	}
 	// TODO: validate permision
 
+	return nil
 }
 
 func (cfg *FileLoggerConfig) GetConfig() IConfig {
@@ -115,12 +113,13 @@ type FileLevelLoggerConfig struct {
 
 var _ IConfig = &FileLevelLoggerConfig{}
 
-func (cfg *FileLevelLoggerConfig) validate() {
+func (cfg *FileLevelLoggerConfig) validate() error {
 	if _, err := strftime.New(cfg.filename); err != nil {
-		//TODO: panic in lib is not good
-		panic("invalid filename string")
+		return fmt.Errorf("invalid filename string")
 	}
 	//TODO: valid linked  file
+
+	return nil
 }
 
 func (cfg *FileLevelLoggerConfig) GetConfig() IConfig {
@@ -136,14 +135,12 @@ type BaseFileLogConfig struct {
 
 var _ IConfig = &BaseFileLogConfig{}
 
-func (cfg *BaseFileLogConfig) validate() {
+func (cfg *BaseFileLogConfig) validate() error {
 	if cfg.rotationTime < 0 {
-		//TODO: panic in lib is not good
-		panic("invalid rotation time")
+		return fmt.Errorf("invalid rotation time: cann't be negative")
 	}
 	if cfg.maxAge > 0 && cfg.maxCount > 0 {
-		//TODO: panic in lib is not good
-		panic("only one of maxAge  and maxCount can set")
+		return fmt.Errorf("only one of maxAge  and maxCount can set")
 	}
 
 	if cfg.maxAge <= 0 {
@@ -151,7 +148,11 @@ func (cfg *BaseFileLogConfig) validate() {
 	}
 	if cfg.maxCount <= 0 {
 		cfg.maxCount = 0
+	} else {
+		cfg.maxAge = -1
 	}
+
+	return nil
 }
 
 func (cfg *BaseFileLogConfig) GetConfig() IConfig {
@@ -170,7 +171,7 @@ func (cfg *LoggerConfig) GetConfig() IConfig {
 }
 
 //optimize: less call
-func (cfg *LoggerConfig) validate() {
+func (cfg *LoggerConfig) validate() error {
 	if cfg.Flags == 0 {
 		cfg.Flags = defaultLogFlags
 	}
@@ -181,4 +182,5 @@ func (cfg *LoggerConfig) validate() {
 	}
 
 	cfg.Level = level
+	return nil
 }

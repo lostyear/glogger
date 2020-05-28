@@ -43,7 +43,9 @@ func newWriterLevelLogger(w io.Writer) *writerLevelLogger {
 }
 
 func newWriterLevelLoggerWithConfig(w io.Writer, cfg LoggerConfig) *writerLevelLogger {
-	cfg.validate()
+	if err := cfg.validate(); err != nil {
+		return nil
+	}
 	logger := newBaseLogger(w, cfg.Level, cfg.Flags)
 	return &writerLevelLogger{
 		baseLevelLogger: logger,

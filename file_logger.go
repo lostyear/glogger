@@ -1,7 +1,7 @@
 package glogger
 
 import (
-	"log"
+	"fmt"
 
 	rlogs "github.com/lestrrat-go/file-rotatelogs"
 )
@@ -19,13 +19,15 @@ type fileLogger struct {
 
 var _ Logger = &fileLogger{}
 
-func NewFileLoggerWithConfigFile(path string) FileLogger {
+func NewFileLoggerWithConfigFile(path string) (FileLogger, error) {
 	config := loadConfigFile(path)
 	return NewFileLoggerWithConfig(*config)
 }
 
-func NewFileLoggerWithConfig(cfg FileLoggerConfig) FileLogger {
-	cfg.validate()
+func NewFileLoggerWithConfig(cfg FileLoggerConfig) (FileLogger, error) {
+	if err := cfg.validate(); err != nil {
+		return nil, err
+	}
 
 	l := fileLogger{
 		fileConfig: cfg,
@@ -36,10 +38,14 @@ func NewFileLoggerWithConfig(cfg FileLoggerConfig) FileLogger {
 		if num < lLevel[cfg.Level] {
 			l.lLoggers[level] = defaultEmptyLogger
 		} else {
-			l.lLoggers[level] = newFileLevelLoggerWithConfig(cfg.newFileLevelLoggerConfig(level))
+			if log, err := newFileLevelLoggerWithConfig(cfg.newFileLevelLoggerConfig(level)); err != nil {
+				return nil, err
+			} else {
+				l.lLoggers[level] = log
+			}
 		}
 	}
-	return &l
+	return &l, nil
 }
 
 func (l *fileLogger) GetConfig() IConfig {
@@ -52,8 +58,10 @@ type fileLevelLogger struct {
 	fileWriter *rlogs.RotateLogs
 }
 
-func newFileLevelLoggerWithConfig(cfg FileLevelLoggerConfig) *fileLevelLogger {
-	cfg.validate()
+func newFileLevelLoggerWithConfig(cfg FileLevelLoggerConfig) (*fileLevelLogger, error) {
+	if err := cfg.validate(); err != nil {
+		return nil, err
+	}
 
 	w, err := rlogs.New(
 		cfg.filename,
@@ -63,12 +71,11 @@ func newFileLevelLoggerWithConfig(cfg FileLevelLoggerConfig) *fileLevelLogger {
 		rlogs.WithRotationCount(cfg.maxCount),
 	)
 	if err != nil {
-		//TODO: panic in lib is not good
-		log.Panic("open log file error! ", err)
+		return nil, fmt.Errorf("open log file error! ", err)
 	}
 
 	logger := newBaseLogger(w, cfg.Level, cfg.Flags)
 	return &fileLevelLogger{
 		baseLevelLogger: logger,
-	}
+	}, nil
 }

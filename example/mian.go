@@ -14,7 +14,7 @@ func main() {
 	glogger.Warnf("This is a watn log")
 	glogger.Errorf("This is an error log")
 	// glogger.Fatalf("This is a fatal log")
-	logger := glogger.NewFileLoggerWithConfigFile("config.toml")
+	logger, _ := glogger.NewFileLoggerWithConfigFile("config.toml")
 	fmt.Println(logger.GetConfig())
 	logger.Debugf("This is a debug log")
 	logger.Infof("This is an info log")

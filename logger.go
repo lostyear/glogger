@@ -34,15 +34,17 @@ var _ Logger = &baseLogger{}
 type mLogger map[string]levelLogger
 
 func newBaseLoggerWithConfig(cfg LoggerConfig) *baseLogger {
-	cfg.validate()
+	if err := cfg.validate(); err != nil {
+		return nil
+	}
 	return &baseLogger{
 		config:   cfg,
 		lLoggers: make(mLogger),
 	}
 }
 
-func (l *baseLogger) validate() {
-	l.config.validate()
+func (l *baseLogger) validate() error {
+	return l.config.validate()
 }
 
 func (l *baseLogger) GetConfig() IConfig {
