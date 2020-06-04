@@ -20,8 +20,11 @@ type fileLogger struct {
 var _ Logger = &fileLogger{}
 
 func NewFileLoggerWithConfigFile(path string) (FileLogger, error) {
-	config := loadConfigFile(path)
-	return NewFileLoggerWithConfig(*config)
+	if config, err := loadConfigFile(path); err != nil {
+		return nil, err
+	} else {
+		return NewFileLoggerWithConfig(*config)
+	}
 }
 
 func NewFileLoggerWithConfig(cfg FileLoggerConfig) (FileLogger, error) {

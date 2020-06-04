@@ -2,7 +2,6 @@ package glogger
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -29,13 +28,12 @@ type FileLoggerConfigFile struct {
 
 var _ IConfig = &FileLoggerConfigFile{}
 
-func loadConfigFile(path string) *FileLoggerConfig {
+func loadConfigFile(path string) (*FileLoggerConfig, error) {
 	var conf FileLoggerConfigFile
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
-		//TODO: panic in lib is not good
-		log.Panicf("decode config file failed! Error: %s", err)
+		return nil, fmt.Errorf("decode config file failed! Error: %s", err.Error())
 	}
-	return conf.convertConfigFile()
+	return conf.convertConfigFile(), nil
 }
 
 func (fcfg *FileLoggerConfigFile) convertConfigFile() *FileLoggerConfig {
